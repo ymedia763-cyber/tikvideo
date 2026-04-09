@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>TokSave — Premium TikTok Downloader</title>
+  <!-- Google Fonts + Smooth Base -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.25s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      margin: 0;
+      background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+      transition: background 0.3s ease;
+    }
+
+    /* LIGHT THEME (white & pink) */
+    :root {
+      --bg-start: #fff5f8;
+      --bg-end: #ffe0ec;
+      --card-bg: rgba(255, 255, 255, 0.96);
+      --text-primary: #1e1a2f;
+      --text-secondary: #4a4458;
+      --accent-pink: #ff2c6c;
+      --accent-pink-light: #ff5a8e;
+      --accent-pink-soft: #ffb7ce;
+      --border-light: rgba(255, 44, 108, 0.2);
+      --input-bg: #ffffff;
+      --input-border: #ffbfd1;
+      --shadow-sm: 0 12px 28px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(255, 44, 108, 0.08);
+      --shadow-focus: 0 0 0 3px rgba(255, 44, 108, 0.25);
+      --btn-bg: #ff2c6c;
+      --btn-hover: #e61a58;
+      --btn-text: white;
+      --download-bg: #ff2c6c;
+      --icon-color: #ff2c6c;
+      --loader-color: #ff2c6c;
+      --card-radius: 2rem;
+    }
+
+    /* DARK THEME (black & red) */
+    body.dark {
+      --bg-start: #050505;
+      --bg-end: #2c0808;
+      --card-bg: #0c0c0c;
+      --text-primary: #f0f0f0;
+      --text-secondary: #bfbfbf;
+      --accent-pink: #e03a3a;
+      --accent-pink-light: #ff4d4d;
+      --accent-pink-soft: #4a1818;
+      --border-light: rgba(224, 58, 58, 0.35);
+      --input-bg: #181818;
+      --input-border: #6e2c2c;
+      --shadow-sm: 0 20px 35px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(224, 58, 58, 0.2);
+      --shadow-focus: 0 0 0 3px rgba(224, 58, 58, 0.5);
+      --btn-bg: #d32f2f;
+      --btn-hover: #b71c1c;
+      --btn-text: #ffffff;
+      --download-bg: #d32f2f;
+      --icon-color: #e03a3a;
+      --loader-color: #e03a3a;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Premium Card */
+    .downloader-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(2px);
+      border-radius: var(--card-radius);
+      padding: 2rem 1.8rem 2.2rem;
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.3s ease;
+      animation: floatIn 0.6s ease-out;
+    }
+
+    .downloader-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 28px 40px -14px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--border-light);
+    }
+
+    /* Header with Logo + Theme Toggle */
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tiktok-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      animation: subtlePulse 2s infinite ease;
+    }
+
+    .tiktok-icon svg {
+      width: 36px;
+      height: 36px;
+      color: var(--icon-color);
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.1));
+      transition: transform 0.2s;
+    }
+
+    .tiktok-icon:hover svg {
+      transform: scale(1.03);
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-pink-light));
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border-light);
+      border-radius: 3rem;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: var(--input-bg);
+      transition: all 0.25s;
+    }
+
+    .theme-toggle svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--accent-pink);
+      fill: none;
+      stroke-width: 2;
+      color: var(--accent-pink);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(0.96);
+      background: var(--accent-pink-soft);
+      border-color: var(--accent-pink);
+    }
+
+    /* Input Group */
+    .input-group {
+      margin: 1.8rem 0 1.5rem;
+    }
+
+    .url-input {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 2rem;
+      color: var(--text-primary);
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: 'Inter', monospace;
+    }
+
+    .url-input:focus {
+      border-color: var(--accent-pink);
+      box-shadow: var(--shadow-focus);
+    }
+
+    .url-input::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.6;
+      font-weight: 400;
+    }
+
+    /* Primary Button */
+    .btn-primary {
+      background: var(--btn-bg);
+      border: none;
+      padding: 1rem 1.8rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 3rem;
+      color: var(--btn-text);
+      width: 100%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary svg {
+      width: 20px;
+      height: 20px;
+      stroke: white;
+      stroke-width: 1.8;
+      fill: none;
+    }
+
+    .btn-primary:hover {
+      background: var(--btn-hover);
+      transform: scale(0.98);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Result container */
+    .result-area {
+      margin-top: 1.8rem;
+      border-radius: 1.5rem;
+      background: rgba(0, 0, 0, 0.02);
+      transition: all 0.2s;
+    }
+
+    .status-message {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 1rem;
+      background: var(--accent-pink-soft);
+      border-radius: 2rem;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .video-wrapper {
+      animation: fadeSlideUp 0.4s ease;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+      margin-top: 0.5rem;
+      border: 1px solid var(--border-light);
+    }
+
+    .download-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 1rem;
+      padding: 0.9rem 1.8rem;
+      background: var(--download-bg);
+      border-radius: 3rem;
+      text-decoration: none;
+      font-weight: 600;
+      color: white;
+      width: 100%;
+      transition: all 0.2s;
+      border: none;
+      font-size: 0.95rem;
+    }
+
+    .download-link svg {
+      width: 18px;
+      height: 18px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .download-link:hover {
+      background: var(--btn-hover);
+      transform: translateY(-2px);
+    }
+
+    /* Spinner Animation */
+    .spinner-svg {
+      animation: spin 0.8s linear infinite;
+      width: 22px;
+      height: 22px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes floatIn {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.96);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes subtlePulse {
+      0% { opacity: 0.9; transform: scale(1);}
+      50% { opacity: 1; transform: scale(1.02);}
+      100% { opacity: 0.9; transform: scale(1);}
+    }
+
+    /* smooth misc */
+    .attribution {
+      text-align: center;
+      margin-top: 1.2rem;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      opacity: 0.7;
+    }
+
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* no lag / smooth hardware acceleration */
+    .downloader-card, .btn-primary, .download-link {
+      will-change: transform;
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="downloader-card">
+    <div class="card-header">
+      <div class="logo-area">
+        <div class="tiktok-icon">
+          <!-- Premium TikTok Logo SVG (Music Note + iconic vibe) -->
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.5 14.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5c.36 0 .7.08 1.01.22l.49-.49V9h1.5v4.5c0 1.38-1.12 2.5-2.5 2.5zm4.5-4c0-1.1-.9-2-2-2v-1.5c1.93 0 3.5 1.57 3.5 3.5h-1.5z" fill="currentColor"/>
+          </svg>
+        </div>
+        <h1>TokSave</h1>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Switch theme">
+        <!-- Sun / Moon dynamic but we switch via js, both exist inside svg but we'll use inline switch? Better to keep same but use class? Actually we replace icon based on theme, but simpler: use single icon that changes style? no: we use two svg or one based on dark mode, but we'll toggle content -->
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="input-group">
+      <input type="text" id="videoUrl" class="url-input" placeholder="🔗 Paste TikTok link here... (ex: https://vm.tiktok.com/...)" autocomplete="off">
+    </div>
+
+    <button class="btn-primary" id="downloadBtn">
+      <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
+        <polyline points="8 12 12 16 16 12"></polyline>
+        <line x1="12" y1="2" x2="12" y2="16"></line>
+      </svg>
+      Get Video
+    </button>
+
+    <div id="resultContainer" class="result-area"></div>
+    <div class="attribution">no watermark • smooth & premium</div>
+  </div>
+</div>
+
+<script>
+  // DOM elements
+  const urlInput = document.getElementById('videoUrl');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const resultDiv = document.getElementById('resultContainer');
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+
+  // ----- THEME LOGIC (white & pink / black & red) -----
+  function setTheme(theme) {
+    if (theme === 'dark') {
+      document.body.classList.add('dark');
+      localStorage.setItem('tok_theme', 'dark');
+      // Update toggle icon to sun (represent light mode available)
+      themeIcon.innerHTML = `<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+    } else {
+      document.body.classList.remove('dark');
+      localStorage.setItem('tok_theme', 'light');
+      themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" fill="none"/>`;
+    }
+  }
+
+  function loadStoredTheme() {
+    const saved = localStorage.getItem('tok_theme');
+    if (saved === 'dark') {
+      setTheme('dark');
+    } else {
+      setTheme('light');
+    }
+  }
+
+  themeToggle.addEventListener('click', () => {
+    const isDark = document.body.classList.contains('dark');
+    if (isDark) {
+      setTheme('light');
+    } else {
+      setTheme('dark');
+    }
+  });
+
+  loadStoredTheme();
+
+  // ----- Helper: Clear emojis & show SVG-based messages -----
+  function showLoading() {
+    resultDiv.innerHTML = `
+      <div class="status-message">
+        <svg class="spinner-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.3"/>
+          <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" stroke-linecap="round"/>
+        </svg>
+        <span>Processing video ...</span>
+      </div>
+    `;
+  }
+
+  function showError(message) {
+    resultDiv.innerHTML = `
+      <div class="status-message">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10" stroke="currentColor"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <circle cx="12" cy="16" r="0.5" fill="currentColor" stroke="none"/>
+        </svg>
+        <span>${message}</span>
+      </div>
+    `;
+  }
+
+  function showVideoResult(videoUrl) {
+    resultDiv.innerHTML = `
+      <div class="video-wrapper">
+        <video controls src="${videoUrl}" preload="metadata"></video>
+        <a class="download-link" href="${videoUrl}" download="tiktok_video.mp4">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
+            <polyline points="8 12 12 16 16 12"></polyline>
+            <line x1="12" y1="2" x2="12" y2="16"></line>
+          </svg>
+          Download HD Video
+        </a>
+      </div>
+    `;
+  }
+
+  // ----- Core API Logic (preserved functionality, only UI/emojiless) -----
+  async function fetchTikTokVideo(url) {
+    try {
+      // Using tikwm API (same as original but robust)
+      const apiEndpoint = `https://tikwm.com/api/?url=${encodeURIComponent(url)}`;
+      const response = await fetch(apiEndpoint);
+      const data = await response.json();
+
+      if (data && data.data && data.data.play) {
+        return { success: true, videoUrl: data.data.play };
+      } else {
+        return { success: false, errorMsg: "No video found. Check link or try another." };
+      }
+    } catch (err) {
+      console.error(err);
+      return { success: false, errorMsg: "Network issue. Please try again later." };
+    }
+  }
+
+  // main download handler
+  async function downloadVideo() {
+    const rawUrl = urlInput.value.trim();
+    if (!rawUrl) {
+      showError("Please enter a TikTok video link");
+      return;
+    }
+
+    // Basic tiktok url pattern hint but not strict
+    if (!rawUrl.includes("tiktok.com") && !rawUrl.includes("vm.tiktok")) {
+      showError("Looks like an invalid TikTok link. Try a valid URL");
+      return;
+    }
+
+    showLoading();
+
+    const result = await fetchTikTokVideo(rawUrl);
+    if (result.success) {
+      showVideoResult(result.videoUrl);
+    } else {
+      showError(result.errorMsg || "Failed to fetch video. Make sure link is public.");
+    }
+  }
+
+  downloadBtn.addEventListener('click', downloadVideo);
+  // optional: enter key trigger
+  urlInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') downloadVideo();
+  });
+
+  // additional micro: cleanup on new request, but no extra emojis elsewhere
+  // ensure no emojis exist on initial load - clear any default text
+  resultDiv.innerHTML = '';
+</script>
+</body>
+</html>
