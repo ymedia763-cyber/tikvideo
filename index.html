@@ -71,7 +71,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   animation: fadeIn 1.5s ease;
 }
 
@@ -96,6 +96,28 @@ body {
 .social-btn:hover {
   transform: translateY(-5px) scale(1.05);
   filter: brightness(1.2);
+}
+
+/* نیا ٹک ٹاک ڈاؤنلوڈر بٹن اسٹائل */
+.tt-downloader-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 15px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 25px;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: 0.3s;
+}
+
+.tt-downloader-link:hover {
+  background: #fe2c55;
+  border-color: #fe2c55;
 }
 
 .logo-icon { 
@@ -231,6 +253,11 @@ input::placeholder { color: rgba(255,255,255,0.6); }
       <i class="fab fa-whatsapp"></i> Join
     </a>
   </div>
+
+  <a href="https://ymedia763-cyber.github.io/tiktokvieo/" target="_blank" class="tt-downloader-link">
+    <svg viewBox="0 0 448 512" width="16" fill="white"><path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25V349.38A162.55 162.55 0 1 1 185 188.31V278.2a74.62 74.62 0 1 0 52.23 71.18V0l88 0a121.18 121.18 0 0 0 1.86 22.17h.03a122.18 122.18 0 0 0 10.85 31.37 128.9 128.9 0 0 0 110.16 69.43v87.94z"/></svg>
+    Try TikTok Video Downloader
+  </a>
 
   <div class="logo-icon"><i class="fab fa-youtube"></i></div>
   <h2 style="margin:0 0 25px 0; font-weight: 700; letter-spacing: -1px;">YT Thumbnail Downloader</h2>
